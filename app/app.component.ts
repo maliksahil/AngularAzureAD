@@ -1,22 +1,48 @@
-import { Component } from 'angular2/core';
-import { Router, RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS} from "angular2/router";
-import {LoginComponent} from './login.component';
+import { Component, provide } from '@angular/core';
+import { ROUTER_DIRECTIVES } from '@angular/router';
+import {Http, HTTP_PROVIDERS, ConnectionBackend} from '@angular/http';
+
+import {ServiceConstants} from './Authentication/ServiceConstants';
+import {Authenticator} from './Authentication/Authenticator';
+import {AuthenticatedHttpService} from './Authentication/AuthenticatedHttpService';
+import {AzureADAuthHelper} from './Authentication/AzureADAuthHelper';
+
+import {HomeComponent} from './home.component';
 import {FilesComponent} from './files.component';
+
+var azureADAuthHelper = new AzureADAuthHelper(new ServiceConstants("19d25c72-6c48-4019-a7e1-6faf56f612c8", "winsmartsdev.onmicrosoft.com", "http://localhost:3000"));
+var authenticator = new Authenticator(azureADAuthHelper);
+function authenticatorFactory() {
+    return authenticator;
+}
 
 @Component({
     selector: 'app',
-    template:'<router-outlet></router-outlet>',
+    templateUrl: './app/app.component.html',
     directives: [ROUTER_DIRECTIVES],
-    providers: [ROUTER_PROVIDERS]
+    precompile:[FilesComponent],
+    providers: [Http, HTTP_PROVIDERS, AuthenticatedHttpService,
+        provide(Authenticator, { useFactory: authenticatorFactory })],
 })
 
-@RouteConfig([
-    { path: '/files', name: 'Files', component: FilesComponent },
-    { path: '/login', name: 'Login', component: LoginComponent }    
-])
+export class AppComponent {
+    private isUserAuthenticated: boolean = false;
 
-export class AppComponent { 
-    constructor(private _router:Router) {
-        this._router.navigate(['/Files']);
+    constructor(
+        private _authenticator: Authenticator,
+        private _authenticatedHttpService: AuthenticatedHttpService) {
+        this.isUserAuthenticated = _authenticator.isUserAuthenticated();
+    }
+
+    logIn() {
+        var promise = this._authenticator.logIn(window.location.href);
+    }
+
+    logOut() {
+        var promise = this._authenticator.logOut("/");
+    }
+
+    get userName() {
+        return this._authenticator.userName;
     }
 }

@@ -6,19 +6,14 @@ import {Authenticator} from './Authentication/Authenticator';
 import {AuthenticatedHttpService} from './Authentication/AuthenticatedHttpService';
 
 @Component({
-    selector: "files",
-    templateUrl: "./app/files.component.html",
+    selector: "home",
+    templateUrl: "./app/home.component.html",
     directives:[ROUTER_DIRECTIVES]
 })
 
-export class FilesComponent {
-    private files = [];
+export class HomeComponent {
+    private isUserAuthenticated: boolean = false;
     constructor(private _authenticator:Authenticator, private _http:AuthenticatedHttpService) {
-    }
-
-    getFiles() {
-        this._http.get("https://graph.microsoft.com/v1.0/me/drive/recent").then((files:any) => { 
-            this.files = files.value; 
-        })
+        this.isUserAuthenticated = _authenticator.isUserAuthenticated();
     }
 }

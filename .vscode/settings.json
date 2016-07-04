@@ -4,7 +4,7 @@
         "**/.DS_Store": true,
         "**/*.js":true,
         "**/*.js.map":true,
-        "node_modules":true,
-        
+        "systemjs.config.js":false,
+        "node_modules":true        
     }
 }

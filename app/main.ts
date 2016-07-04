@@ -1,12 +1,14 @@
-import {provide} from 'angular2/core';
-import {bootstrap} from 'angular2/platform/browser';
+import { bind } from '@angular/core';
+import { provideRouter, RouterConfig } from '@angular/router';
+import {bootstrap} from '@angular/platform-browser-dynamic';
+
 import {AppComponent} from './app.component'
-import { 
-	Router,
-	RouteConfig,
-	ROUTER_DIRECTIVES,
-	ROUTER_PROVIDERS,
-	LocationStrategy,
-	HashLocationStrategy
-} from "angular2/router";
-bootstrap(AppComponent, [ROUTER_PROVIDERS, provide(LocationStrategy, { useClass: HashLocationStrategy })]);
+import {FilesComponent} from './files.component';
+import {HomeComponent} from './home.component';
+
+export const CustomAppRoutes: RouterConfig = [
+  { path: '', terminal: true, component: HomeComponent},
+  { path: 'files', terminal: true, component: FilesComponent}
+];
+
+bootstrap(AppComponent, [provideRouter(CustomAppRoutes)]);
