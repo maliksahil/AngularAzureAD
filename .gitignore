@@ -1,5 +1,5 @@
-**/*.js.map
-**/*.js
+app/**/*.js.map
+app/**/*.js
 node_modules
 typings
 npm-debug*.*
